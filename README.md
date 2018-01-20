@@ -13,3 +13,4 @@ sudo apt-get install mpg123
 
 ### snapshot
 ![photo](./photo.jpg)
+![screenshot](./screenshot.png)
