@@ -26,7 +26,6 @@ def request_ajax_url(url,body,referer=None,cookie=None,**headers):
             req.add_header(k,headers[k])
 
     postBody = urllib.urlencode(body)
-    print postBody
     response = urllib2.urlopen(req, postBody)
     if response:
         return response
@@ -76,12 +75,6 @@ def wechat_run():
 
 
 if __name__ == '__main__':
-	threads = []
-	t1 = threading.Thread(target=wechat_run)
-	threads.append(t1)
-	t2 = threading.Thread(target=worker_run)
-	threads.append(t2)
-	for t in threads:
-		t.setDaemon(True)
-		t.start()
-	t.join()
+	t = threading.Thread(target=worker_run)
+	t.start()
+    wechat_run()

@@ -11,6 +11,11 @@ pip install itchat
 sudo apt-get install mpg123
 ```
 
+### commands
+- 点歌@<歌名>
+- 当前歌单
+
+> 可以自行设置更多指令
+
 ### snapshot
-![photo](./photo.jpg)
-![screenshot](./screenshot.png)
+![screenshot](./musicbox.png)
