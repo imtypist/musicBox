@@ -7,8 +7,14 @@ import os
 import time
 import itchat
 import threading
+from aip import AipSpeech
 
 music_list = []
+
+""" 你的 APPID AK SK """
+APP_ID = 'App ID'
+API_KEY = 'Api Key'
+SECRET_KEY = 'Secret Key'
 
 def request_ajax_url(url,body,referer=None,cookie=None,**headers):
     req = urllib2.Request(url)
@@ -31,20 +37,29 @@ def request_ajax_url(url,body,referer=None,cookie=None,**headers):
         return response
 
 def music(name):
-	platform_list = ["netease","qq","kugou","kuwo","xiami","migu"]
+	platform_list = ["xiami","netease","qq","kugou","kuwo","migu"]
 	url = "http://music.liuzhijin.cn/"
 	referer = "http://music.liuzhijin.cn/"
 	for index,platform in enumerate(platform_list):
 		FormData = {"input": name, "filter": "name", "type": platform, "page": 1}
 		res = json.loads(request_ajax_url(url, FormData, referer).read())
 		if res['code'] == 200:
-			os.system("mpg123 " + res['data'][0]['url']);
-			return True
+            for el in res['data']:
+                if el['url'] and len(el['title']) <= len(name)*2:
+                    result  = client.synthesis('下一首歌曲 ' + name, 'zh', 1, {'vol': 5,})
+                    if not isinstance(result, dict):
+                        with open('audio.mp3', 'wb') as f:
+                            f.write(result)
+                        os.system("mpg123 audio.mp3")
+                    os.system("mpg123 " + el['url'])
+                    return True
 		else:
-			if index == len(platform_list)-1:
-				print platform, u'未找到符合的歌曲，请另选曲目'
-			else:
-				print platform, u'未找到符合的歌曲，查找下个平台', platform_list[index+1]
+			if index == len(platform_list) - 1:
+				result  = client.synthesis('没有找到歌曲 ' + name, 'zh', 1, {'vol': 5,})
+                if not isinstance(result, dict):
+                    with open('audio.mp3', 'wb') as f:
+                        f.write(result)
+                    os.system("mpg123 audio.mp3")
 
 
 def worker_run():
@@ -64,8 +79,8 @@ def text_reply(msg):
         return data[1] + u'已进入等待播放队列...'
     if data[0] == u'当前歌单':
         temp = u''
-        for item in music_list:
-            temp = temp + item.decode('utf8') + '\n'
+        for index,item in enumerate(music_list):
+            temp = temp + str(index) + '.' + item.decode('utf8') + '\n'
         return temp
 
 
@@ -75,6 +90,7 @@ def wechat_run():
 
 
 if __name__ == '__main__':
+    client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
 	t = threading.Thread(target=worker_run)
 	t.start()
     wechat_run()

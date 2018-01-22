@@ -10,9 +10,13 @@ pip install itchat
 ```bash
 sudo apt-get install mpg123
 ```
+- baidu-aip: 百度语音合成
+```bash
+pip install baidu-aip
+```
 
 ### commands
-- 点歌@<歌名>
+- 点歌@<歌名> [<歌手>]
 - 当前歌单
 
 > 可以自行设置更多指令
